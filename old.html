@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Old Coins Marketplace</title>
+    <link rel="stylesheet" href="coin.css">
+</head>
+<body>
+
+    <nav>
+        <h1>Old Coins Marketplace</h1>
+        <div class="search-bar">
+            <input type="text" placeholder="Search Coins...">
+        </div>
+        <button class="login-btn" onclick="showLoginForm()">Login</button>
+    </nav>
+
+    <div id="login-overlay" onclick="closeLoginForm()"></div>
+
+    <div id="login-form">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div class="container">
+        <button class="add-coin-btn" onclick="toggleAddCoinForm()">Add New Coin</button>
+
+        <div id="new-coin-form">
+            <h2>Add a New Coin</h2>
+            <input type="text" id="coin-name" placeholder="Coin Name" required>
+            <input type="number" id="coin-price" placeholder="Price ($)" required>
+            <textarea id="coin-description" placeholder="Coin Description" rows="5" required></textarea>
+            <input type="file" id="coin-image" accept="image/*" required>
+            <button onclick="addCoin()">Add Coin</button>
+        </div>
+
+        <div id="coin-container">
+        </div>
+    </div>
+
+    <script>
+
+        function toggleAddCoinForm() {
+            const form = document.getElementById('new-coin-form');
+            form.style.display = form.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function addCoin() {
+            const coinName = document.getElementById('coin-name').value;
+            const coinPrice = document.getElementById('coin-price').value;
+            const coinDescription = document.getElementById('coin-description').value;
+            const coinImage = document.getElementById('coin-image').files[0];
+
+            if (!coinName || !coinPrice || !coinDescription || !coinImage) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            const coinContainer = document.getElementById('coin-container');
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const newCoin = document.createElement('div');
+                newCoin.classList.add('coin-card');
+
+                newCoin.innerHTML = `
+                    <div class="coin-image">
+                        <img src="${e.target.result}" alt="${coinName}">
+                    </div>
+                    <div class="coin-info">
+                        <h2>${coinName}</h2>
+                        <p>${coinDescription}</p>
+                        <p class="price">$${coinPrice}</p>
+                        <button onclick="buyCoin('${coinName}', '${coinPrice}')">Buy Now</button>
+                    </div>
+                `;
+
+                coinContainer.appendChild(newCoin);
+
+               
+                document.getElementById('coin-name').value = '';
+                document.getElementById('coin-price').value = '';
+                document.getElementById('coin-description').value = '';
+                document.getElementById('coin-image').value = '';
+                toggleAddCoinForm();
+            };
+            reader.readAsDataURL(coinImage);
+        }
+
+        function buyCoin(name, price) {
+            alert(`You are purchasing ${name} for $${price}. Thank you for your purchase!`);
+        }
+
+        function showLoginForm() {
+            document.getElementById('login-overlay').style.display = 'block';
+            document.getElementById('login-form').style.display = 'block';
+        }
+
+        function closeLoginForm() {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('login-form').style.display = 'none';
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username && password) {
+                alert(`Welcome, ${username}!`);
+                closeLoginForm();
+            } else {
+                alert("Please enter a valid username and password.");
+            }
+        }
+    </script>
+
+</body>
+</html>
